@@ -30,10 +30,16 @@
     		<artifactId>twitter4j-core</artifactId>
     		<version>[4.0,)</version>
 	    </dependency>
-		<dependency>
+		<!--dependency>
 			<groupId>mysql</groupId>
 			<artifactId>mysql-connector-java</artifactId>
 			<scope>runtime</scope>
+		</dependency-->
+		<!-- https://mvnrepository.com/artifact/org.postgresql/postgresql -->
+		<dependency>
+		    <groupId>org.postgresql</groupId>
+		    <artifactId>postgresql</artifactId>
+		    <version>42.2.23</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
