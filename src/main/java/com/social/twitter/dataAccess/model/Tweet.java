@@ -23,7 +23,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 public class Tweet {
 	@Id
     private long id;
-    @Column(name = "text",length= 310, columnDefinition = "text CHARACTER SET utf8mb4")
+    @Column(name = "text",length= 310)
     private String text;
 	private Date updatedAt;
 	private Date createdAt;    

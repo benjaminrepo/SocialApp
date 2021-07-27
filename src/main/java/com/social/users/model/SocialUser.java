@@ -13,6 +13,7 @@ import javax.persistence.Lob;
 import javax.persistence.SequenceGenerator;
 
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.Type;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.util.SerializationUtils;
 
@@ -24,8 +25,7 @@ enum Role {
 public class SocialUser {
 	
 	@Id
-	@GeneratedValue(strategy=GenerationType.IDENTITY, generator="my_entity_seq_gen")
-	@SequenceGenerator(name="my_entity_seq_gen", sequenceName="MY_ENTITY_SEQ")
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
     private Long id;
     
 	@Column(unique = true, nullable = false)
@@ -33,9 +33,12 @@ public class SocialUser {
     private String name;
     private String accessToken;
     private String accessTokensecret;
+    
     @Lob
-    @Column(name = "twitterObj", columnDefinition="BLOB")
+    @Column(columnDefinition="bytea")
+    @Type(type="org.hibernate.type.BinaryType")
     private byte[] twitterObj;
+    
     @Enumerated(EnumType.STRING)
     private Role role;
 
