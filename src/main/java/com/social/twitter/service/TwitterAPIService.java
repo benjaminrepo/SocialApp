@@ -1,8 +1,6 @@
-package com.social.twitter.dataAccess.service;
+package com.social.twitter.service;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -11,53 +9,37 @@ import org.modelmapper.config.Configuration.AccessLevel;
 import org.modelmapper.convention.MatchingStrategies;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.stereotype.Service;
 
-import com.social.twitter.dataAccess.model.TUser;
-import com.social.twitter.dataAccess.model.Tweet;
-import com.social.twitter.dataAccess.repository.TweetRepository;
+import com.social.twitter.model.TUser;
+import com.social.twitter.model.Tweet;
+import com.social.users.model.SocialUser;
 
+import twitter4j.ResponseList;
 import twitter4j.Status;
+import twitter4j.Twitter;
+import twitter4j.TwitterException;
 
-@Service
-public class TweetService {
-	private static final Logger LOGGER = LoggerFactory.getLogger(TweetService.class);
+public class TwitterAPIService {
 
-	@Autowired
-	TweetRepository tweetRepository;
+	private static final Logger LOGGER = LoggerFactory.getLogger(TwitterAPIService.class);
 
-	public void addNewTweetsForUser(Status status, long SID, long TUID) {
+	public static ResponseList<Status> fetchUserTimelineFromTwitter(SocialUser socialUser) {
 		try {
-			Tweet tweet = mapTweetDO(status);
-			tweetRepository.save(tweet);
-			LOGGER.info("userStatus updated {}", tweet.getId());
-
-		} catch (Exception e) {
-			LOGGER.error("Tweet not updated for {} {} {} ", SID, TUID, e.getMessage());
-		}
-
-	}
-
-	public List<Tweet> getRecentStatus(long TUID) {
-		LOGGER.debug("get recent Status TUID {}", TUID);
-		try {
+			Twitter twitter = socialUser.getTwitter();
+			// ResponseList<Status> timeline = twitter.getHomeTimeline();
 			Pageable paging = PageRequest.of(0, 20, Sort.by("createdAt").descending());
-			Page<Tweet> pagedResult = tweetRepository.findByUserId(TUID, paging);
-			if (pagedResult.hasContent()) {
-				return pagedResult.getContent();
-			}
-		} catch (Exception e) {
-			LOGGER.error("tuid {}", TUID);
+			ResponseList<Status> timeline = twitter.getUserTimeline();
+			return timeline;
+		} catch (TwitterException e) {
+			LOGGER.error("Unable to fetch user tweets for {}", socialUser.getTUID());
 		}
-		return new ArrayList<Tweet>();
+		return null;
 	}
-
-	private Tweet mapTweetDO(Status status) {
+	
+	public static Tweet mapTweetDO(Status status) {
 		ModelMapper modelMapper = new ModelMapper();
 
 		modelMapper.getConfiguration().setFieldMatchingEnabled(true).setMatchingStrategy(MatchingStrategies.STRICT)
@@ -100,4 +82,5 @@ public class TweetService {
 		return tweet;
 
 	}
+
 }

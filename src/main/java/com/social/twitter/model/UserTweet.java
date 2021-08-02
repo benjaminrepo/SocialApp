@@ -1,4 +1,4 @@
-package com.social.twitter.dataAccess.model;
+package com.social.twitter.model;
 
 import java.util.Date;
 

@@ -10,7 +10,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
-import javax.persistence.SequenceGenerator;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.Type;
@@ -21,6 +20,7 @@ import twitter4j.Twitter;
 enum Role {
     ADMIN, USER;
 }
+
 @Entity
 public class SocialUser {
 	

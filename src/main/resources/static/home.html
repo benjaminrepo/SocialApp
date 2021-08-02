@@ -2,7 +2,6 @@
 <html>
 <head>
 <meta charset="UTF-8">
-
 <title>Social-Twitter</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="description" content="">
@@ -37,7 +36,7 @@
 			aria-label="Toggle navigation">
 			<span class="navbar-toggler-icon"></span>
 		</button>
-		<input class="form-control form-control-dark w-100" type="text"
+		<input id="search_text" onkeyup = "SearchHandler().onTypeSearchText(event)" class="form-control form-control-dark w-100" type="text"
 			placeholder="Search" aria-label="Search">
 		<button id="schStatus" type="button" class="btn btn-success"></button>
 		<div class="navbar-nav">
@@ -58,13 +57,14 @@
 								Dashboard
 						</a></li>
 						<li class="nav-item" onclick="showRecentTweets()"><a
-							class="nav-link active" aria-current="page" href="#"> <span
+							class="nav-link" aria-current="page" href="#"> <span
 								style="margin-left: 15px" data-feather="home"></span> Recent
 								Tweets
 						</a></li>
-						<li class="nav-item"><a class="nav-link" aria-current="page"
-							href="#"> <span style="margin-left: 15px" data-feather="home"></span>
-								Search Tweets
+						<li class="nav-item" onclick="SearchHandler().onClickSearch()"><a
+							class="nav-link active" aria-current="page" href="#"> <span
+								style="margin-left: 15px" data-feather="home"></span> Search
+								Tweets
 						</a></li>
 
 						<li class="nav-item"><a class="nav-link" href="#"> <span
@@ -84,7 +84,7 @@
 								stop
 						</a></li>
 						<li class="nav-item"><a class="nav-link"
-							href="/scheduler/getSyncUserTimeline" target="_blank"> <span
+							href="/scheduler/oneTimeSync" target="_blank"> <span
 								data-feather="shopping-cart"></span> manual Pull
 						</a></li>
 					</ul>
@@ -102,14 +102,57 @@
 					stop </a>
 
 			</main>
-			<main id="recentView" class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
-				<div
-					class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-					<h1 class="h2">Recent Twitter Timeline</h1>
+			<main style="display: none;" id="searchView"
+				class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+				<div style = "margin-top:50px"
+					class="searchView d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3">
+					<div class="input-group">
+						<span class="input-group-text">filter Query</span> 
+						<input  id="search_filter" type="text" class="form-control"
+							placeholder="filter Query...">
+					</div>
 				</div>
+				<div
+					class="searchView d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3">
+					<h1 class="input-group">
+						<span class="input-group-text">Order by</span> 
+						<input id="search_orderBy" type="text" class="form-control"
+							placeholder="Username">
+					</h1>
+					<h1 class="input-group">
+						<span class="input-group-text">Direction</span> 
+						<input type="text" class="form-control"
+							placeholder="Username" id="search_direction">
+						
+					</h1>
+					<h1 style = "margin-left:200px" class="input-group">
+						<span class="input-group-text">Page</span> 
+						<input type="text" class="form-control"
+							placeholder="Username" id="search_page">
+						
+					</h1>
+					<h1 class="input-group">
+						<span class="input-group-text">Size</span> 
+						<input type="text" class="form-control"
+							placeholder="Username" id="search_size">
+						
+					</h1>
+				</div>				
+				<div
+					class="searchView d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3">
+					<h1>
+						<button type="button" class="btn btn-success" onclick="SearchHandler().onClickSearch();">Search</button>
+						<h6>exapleexpamle sssss</h6>
+					</h1>
+					
+				</div>
+	<div class="d-flex justify-content-center">
+  <div id = "showLoading" class="spinner-border" role="status">
+    <span class="visually-hidden">Loading...</span>
+  </div>
+</div>
 
 				<div style="max-width: none; margin-left: 20px" class="modal-dialog">
-
 				</div>
 			</main>
 		</div>
@@ -120,6 +163,7 @@
 			<h6 id="quoteUser" class="modal-title"></h6>
 			<h6 id="userName" class="modal-title"></h6>
 			<h6 id="displayDate" class="modal-title"></h6>
+			
 		</div>
 		<div class="modal-body">
 			<p id="tweet"></p>
@@ -144,17 +188,7 @@
 		</div>
 	</div>
 
+	
 
 </body>
 </html>
-
-<!-- 
-<br>
-<br>
-To start the scheduler<a href="/scheduler/start">start</a>
-
-<br>
-<br>
-To stop the scheduler<a href="/scheduler/stop">stop</a>
-
-     -->

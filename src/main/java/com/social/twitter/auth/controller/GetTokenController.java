@@ -21,9 +21,6 @@ import twitter4j.conf.ConfigurationBuilder;
 @Controller
 public class GetTokenController {
 
-	private static String consumerKey = "PeZXiz9qYeZZjNTGUU5RNSgzs";
-	private static String consumerSecret = "uW5GhO39CNKpRdRpwh4o6LR90CZJij6FCKKTqFr8bQByG1H3fE";
-
 	@Autowired
 	SocialConfigurationProperties config;
 	private static final Logger LOGGER = LoggerFactory.getLogger(GetTokenController.class);

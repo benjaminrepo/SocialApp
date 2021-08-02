@@ -1,4 +1,4 @@
-package com.social.twitter.dataAccess.model;
+package com.social.twitter.model;
 
 import java.util.Date;
 import java.util.Set;
@@ -66,11 +66,23 @@ public class Tweet {
     private Set<TUser> contributorsIDs;
     
     
-    @CreationTimestamp
-    private Date tweet_created;
+    public Date getTweetCreated() {
+		return tweetCreated;
+	}
+	public void setTweetCreated(Date tweetCreated) {
+		this.tweetCreated = tweetCreated;
+	}
+	public Date getTweetUpdated() {
+		return tweetUpdated;
+	}
+	public void setTweetUpdated(Date tweetUpdated) {
+		this.tweetUpdated = tweetUpdated;
+	}
+	@CreationTimestamp
+    private Date tweetCreated;
 
     @UpdateTimestamp
-    private Date tweet_updated;
+    private Date tweetUpdated;
 	
 	public long getId() {
 		return id;
@@ -221,17 +233,5 @@ public class Tweet {
 	}
 	public void setQuotedStatus(Tweet quotedStatus) {
 		this.quotedStatus = quotedStatus;
-	}
-	public Date getTstatus_created() {
-		return tweet_created;
-	}
-	public void setTstatus_created(Date tstatus_created) {
-		this.tweet_created = tstatus_created;
-	}
-	public Date getTstatus_updated() {
-		return tweet_updated;
-	}
-	public void setTstatus_updated(Date tstatus_updated) {
-		this.tweet_updated = tstatus_updated;
 	}
 }
