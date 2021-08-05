@@ -62,5 +62,13 @@ page=0&size=10
 *  /scheduler/oneTimeSync : to sync last 20 tweets for logged in user
 
 
-
+# Yet to do:
+*  Indexing needs to be done in the database based on the column that the user does most to query.
+*  Application authentication needs to be migrated to spring security. 
+   *  Or userid to be encrypted to store in the http only cookie
+*  UI needs to be completed.
+*  server push notification to be done. To pull after the sceduler executed
+*  tweet and user mapping to be changed to many to many
+*  new mapping to be created to support home timeline tweets
+*  user query object needs to be added.
 
