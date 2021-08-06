@@ -115,8 +115,8 @@ function SearchHandler() {
 
 	function _updateFilter() {
 		var text = $("#search_text").val().trim();
-		filterVal = $("#search_filter").val().split(",").map(val => val.startsWith("search:") ? "" :val).toString()
-		$("#search_filter").val(filterVal+"search:" + text);
+		filterVal = $("#search_filter").val().split(",").map(val => val.trim().startsWith("search:") ? "" :val).toString()
+		$("#search_filter").val(filterVal+" search:" + text);
 	}
 	function getSearchQuery() {
 
@@ -157,7 +157,7 @@ function SearchHandler() {
 			$("#search_text").val("");
 		}
 		if ($("#search_filter").val().trim() === "") {
-			$("#search_filter").val("favoriteCount>0,retweetCount>0,createdAt>2021-06-30,search:");
+			$("#search_filter").val("retweetCount>0, retweetCount<10000, isRetweeted:, search:");
 		}
 	}
 	return {

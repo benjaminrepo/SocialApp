@@ -50,9 +50,10 @@ public class QueryCriteriaConsumer implements Consumer<SearchCriteria> {
 
 				if("search".equals(param.getKey())) {
 					
-					Predicate search = builder.or(builder.like(r.get("text"), "%" + param.getValue() + "%"),
-							builder.like(r.get("user").get("name"), "%" + param.getValue() + "%"),
-							builder.like(r.get("user").get("screenName"), "%" + param.getValue() + "%"));
+					Predicate search = builder.or(
+							builder.like( builder.upper(r.get("text")), "%" + param.getValue().toString().toUpperCase() + "%"),
+							builder.like(builder.upper(r.get("user").get("name")), "%" + param.getValue().toString().toUpperCase() + "%"),
+							builder.like(builder.upper (r.get("user").get("screenName")), "%" + param.getValue().toString().toUpperCase() + "%"));
 					
 					predicate = builder.and(predicate, search);
 					
