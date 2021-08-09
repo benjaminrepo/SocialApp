@@ -157,7 +157,7 @@ function SearchHandler() {
 			$("#search_text").val("");
 		}
 		if ($("#search_filter").val().trim() === "") {
-			$("#search_filter").val("retweetCount>0, retweetCount<10000, isRetweeted:, search:");
+			$("#search_filter").val("retweetCount>0, retweetCount<10000, isRetweeted:, createdAt<2021-06-30, search:");
 		}
 	}
 	return {
