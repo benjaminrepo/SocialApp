@@ -1,59 +1,56 @@
 package com.social.scheduler.service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
-import org.springframework.util.SerializationUtils;
 
-import com.social.twitter.dataAccess.service.TweetService;
+import com.social.twitter.model.Tweet;
+import com.social.twitter.service.TweetService;
+import com.social.twitter.service.TwitterAPIService;
 import com.social.users.model.SocialUser;
 import com.social.users.service.SocialUserService;
 
-import twitter4j.ResponseList;
-import twitter4j.Status;
-import twitter4j.Twitter;
 
-@Component
 public class StatusForUserTask implements Runnable {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(StatusForUserTask.class);
 	private SocialUserService userService;
 	private SocialUser socialUser;
-	private TweetService tStatusService;
+	private TweetService tweetService;
+	private List<Tweet> tweetList;
 
-	public StatusForUserTask() {
-
-	}
 
 	public StatusForUserTask(SocialUser user, SocialUserService userService, TweetService tStatusService) {
 		this.socialUser = user;
 		this.userService = userService;
-		this.tStatusService = tStatusService;
+		this.tweetService = tStatusService;
 	}
 
 	@Override
 	public void run() {
-		long TUID = 0;
 		try {
-			Twitter twitter = (Twitter) SerializationUtils.deserialize(socialUser.getTwitterObj());
-			long SID = socialUser.getId();
-			TUID = socialUser.getTUID();
-
-			// ResponseList<Status> timeline = twitter.getHomeTimeline();
-			ResponseList<Status> timeline = twitter.getUserTimeline();
-
-			for (Status status : timeline) {
-
-				LOGGER.debug("status to update {} ", status);
-				tStatusService.addNewTweetsForUser(status, SID, TUID);
-
+			if(tweetList == null) {
+				tweetList = getTweetList();
 			}
-			userService.updateUpdatedTiime(this.socialUser);
+			tweetService.addUpdateUserTweets(tweetList, socialUser);
+			LOGGER.info("status updated {} ", socialUser.getTUID());
+			userService.updateUpdatedTiime(socialUser);
 
 		} catch (Exception e) {
-			LOGGER.error(" unable to update for ", TUID);
+			LOGGER.error(" unable to update for ", socialUser.getTUID());
 			e.printStackTrace();
 		}
+	}
+	
+	public List<Tweet> getTweetList() {
+		return tweetList = TwitterAPIService
+				.fetchUserTimelineFromTwitter(socialUser)
+				.stream()
+				.map(tweet -> TwitterAPIService.mapTweetDO(tweet))
+				.collect(Collectors.toList());
+
 	}
 
 }

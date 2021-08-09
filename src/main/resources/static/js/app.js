@@ -2,15 +2,19 @@
  * 
  */
 
-var get = function(url, callback) {
-	$.ajax({ "url": url }).then(callback)
+var get = function(url, callback, data) {
+	$("#showLoading").show();
+	$.ajax({ "url": url, "data": data })
+		.then(callback)
+		.fail(function(data) {
+			alert("Error "+data);
+		})
 }
 
 $(document).ready(function() {
-
-	showRecentTweets();
+	SearchHandler().initSearch();
+	SearchHandler().onClickSearch();
 	updateSchedulerStatus();
-
 });
 
 
@@ -44,13 +48,24 @@ function tweetResponseHandler(response) {
 			updateUserMentions(template, tweetObj.userMentionEntities);
 		}
 
-		template.find("#reTweetCount").text(tweetObj.retweetCount);
+		template.find("#reTweetCount").text(tweetObj.retweetCount);		
 		template.find("#likesCount").text(tweetObj.favoriteCount);
+
+		template.find("#likesCount").parent().attr('class', 
+			tweetObj.favorited === true ? 'btn bg-primary': 'btn bg-secondary');
+		template.find("#reTweetCount").parent().attr('class', 
+			tweetObj.retweeted === true ? 'btn bg-primary': 'btn bg-secondary');
+
+
+
 		template.find("#tweet").text(tweetObj.text);
-		template.find("#displayDate").text(tweetObj.createdAt);
+		var jsdate = new Date(Date.parse(tweetObj.createdAt)).toISOString().slice(0, 19).replace('T', ' ');
+		template.find("#displayDate").text(jsdate);
 
 	}
 
+	$("#showLoading").hide();
+	$(".container-fluid .modal-content").remove();
 	response.forEach(function(status) {
 
 		var template = $("#tweetTemplate").clone(true);
@@ -75,13 +90,87 @@ function tweetResponseHandler(response) {
 
 function showRecentTweets() {
 	hideAll();
-	$("#recentView").show();
-	get("/twitter/dataAccess/getRecent", tweetResponseHandler);
+	$(".recentView").show();
+	get("/twitter/getRecent", tweetResponseHandler);
 }
 
+
+function SearchHandler() {
+	var self = this;
+	var searchStr = "";
+
+	function _onTypeSearchText(event) {
+		if (event.keyCode === 13) {
+			_onClickSearch();
+			return;
+		}
+		_updateFilter();
+	}
+
+	function _onClickSearch() {
+		hideAll();
+		$("#searchView").show();
+		get("/twitter/search", tweetResponseHandler, getSearchQuery());
+	}
+
+	function _updateFilter() {
+		var text = $("#search_text").val().trim();
+		filterVal = $("#search_filter").val().split(",").map(val => val.trim().startsWith("search:") ? "" :val).toString()
+		$("#search_filter").val(filterVal+" search:" + text);
+	}
+	function getSearchQuery() {
+
+		var searchStr = "searchTweet=" + encodeURIComponent($("#search_filter").val());
+
+		searchStr += "&orderBy=" + encodeURIComponent($("#search_orderBy").val().trim());
+		searchStr += "&direction=" + encodeURIComponent($("#search_direction").val().trim());
+
+		searchStr += "&page=" + encodeURIComponent($("#search_page").val().trim());
+		searchStr += "&size=" + encodeURIComponent($("#search_size").val().trim());
+		return searchStr;
+
+	}
+
+	function _resetSearch() {
+		$("#search_orderBy").val("createdAt");
+		$("#search_direction").val("asc");
+
+		$("#search_page").val("0");
+		$("#search_size").val("10");
+	}
+
+
+	function _initSearch() {
+		if ($("#search_orderBy").val().trim() === "") {
+			$("#search_orderBy").val("createdAt");
+		}
+		if ($("#search_direction").val().trim() === "") {
+			$("#search_direction").val("desc");
+		}
+		if ($("#search_page").val().trim() === "") {
+			$("#search_page").val("0");
+		}
+		if ($("#search_size").val().trim() === "") {
+			$("#search_size").val("10");
+		}
+		if ($("#search_text").val().trim() === "") {
+			$("#search_text").val("");
+		}
+		if ($("#search_filter").val().trim() === "") {
+			$("#search_filter").val("retweetCount>0, retweetCount<10000, isRetweeted:, createdAt<2021-06-30, search:");
+		}
+	}
+	return {
+		onTypeSearchText: _onTypeSearchText,
+		onClickSearch: _onClickSearch,
+		initSearch: _initSearch
+	}
+
+}
 function hideAll() {
-	$("#recentView").hide();
+	$(".recentView").hide();
 	$("#schView").hide();
+	$(".searchView").hide();
 }
 
 function updateSchedulerStatus() {
@@ -92,7 +181,6 @@ function updateSchedulerStatus() {
 		} else {
 			$("#schStatus")[0].className = "btn btn-danger";
 			$("#schStatus").text("Scheduler Stoped");
-
 		}
 	});
 }

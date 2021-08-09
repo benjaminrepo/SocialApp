@@ -14,7 +14,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import com.social.config.SocialConfigurationProperties;
-import com.social.twitter.dataAccess.service.TweetService;
+import com.social.twitter.service.TweetService;
 import com.social.users.model.SocialUser;
 import com.social.users.service.SocialUserService;
 
