@@ -28,7 +28,7 @@ public class TweetService {
 	@Autowired
 	TweetDAO tweetDAO;
 
-	public void addNewTweetsForUser(List<Tweet> tweets, SocialUser socialUser) {
+	public void addUpdateUserTweets(List<Tweet> tweets, SocialUser socialUser) {
 		try {
 			tweetRepository.saveAll(tweets);
 			LOGGER.info("tweets updated for {}", socialUser.getTUID());
@@ -54,8 +54,12 @@ public class TweetService {
 	}
 
 	public List<Tweet> searchStatus(long TUID, List<SearchCriteria> params, Pageable pageable) {
-
-		List<Tweet> results = tweetDAO.searchTweets(params, pageable);
+		LOGGER.debug("searchStatus TUID {}", TUID);
+		List<Tweet> results = new ArrayList<Tweet>();
+		try {
+			results = tweetDAO.searchTweets(params, pageable);
+		} catch (Exception e) {
+			LOGGER.error("tuid {}", TUID);		}
 
 		return results;
 

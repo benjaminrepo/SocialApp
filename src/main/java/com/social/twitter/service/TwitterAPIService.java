@@ -28,8 +28,11 @@ public class TwitterAPIService {
 
 	public static ResponseList<Status> fetchUserTimelineFromTwitter(SocialUser socialUser) {
 		try {
+			
 			Twitter twitter = socialUser.getTwitter();
 			// ResponseList<Status> timeline = twitter.getHomeTimeline();
+			
+			//TODO : based on the last synced time fetch only updated tweets from Twitter.
 			Pageable paging = PageRequest.of(0, 20, Sort.by("createdAt").descending());
 			ResponseList<Status> timeline = twitter.getUserTimeline();
 			return timeline;

@@ -34,7 +34,7 @@ public class StatusForUserTask implements Runnable {
 			if(tweetList == null) {
 				tweetList = getTweetList();
 			}
-			tweetService.addNewTweetsForUser(tweetList, socialUser);
+			tweetService.addUpdateUserTweets(tweetList, socialUser);
 			LOGGER.info("status updated {} ", socialUser.getTUID());
 			userService.updateUpdatedTiime(socialUser);
 
